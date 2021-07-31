@@ -28,15 +28,13 @@ namespace EmailSender.Service
 
         public async void SendEmailAsync(string recipientEmail, string recipientFirstName, string Link)
         {
-            Link = @"https://github.com/jibogithub";
-
-
+            
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(_smtpSettings.SenderEmail));
             message.To.Add(new MailboxAddress(recipientEmail));
             message.Subject = "How to send email in .Net Core";
 
-            message.Body = new TextPart("html")
+            message.Body = new TextPart("plain")
             {
                 Text = "This is just a walkthrough in sending messages in .net core"
             };
