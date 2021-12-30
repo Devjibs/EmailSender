@@ -15,18 +15,19 @@ namespace EmailSender.Controllers
         {
             _emailSender = emailSender;
         }
+
         [HttpPost, Route("SendEmail")]
-        public void SendEmailAsync(string recipientEmail, string recipientFirstName, string Link)
+        public async Task<IActionResult> SendEmailAsync(string recipientEmail, string recipientFirstName, string Link)
         {
+            string messageStatus = string.Empty;
             try
             {
-                _emailSender.SendEmailAsync(recipientEmail, recipientFirstName, Link);
+                messageStatus = await _emailSender.SendEmailAsync(recipientEmail, recipientFirstName, Link);
+                return Ok(messageStatus);
             }
-
             catch (Exception ex)
             {
-                BadRequest(ex?.InnerException?.InnerException?.Message ?? ex?.InnerException?.Message ?? ex?.Message);
-
+                return BadRequest(ex.Message.ToString());
             }
         }
     }

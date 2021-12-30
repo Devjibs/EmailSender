@@ -24,29 +24,36 @@ namespace EmailSender.Service
             _smtpSettings = smtpSettings.Value;
         }
 
-
-
-        public async void SendEmailAsync(string recipientEmail, string recipientFirstName, string Link)
+        public async Task<string> SendEmailAsync(string recipientEmail, string recipientFirstName, string Link)
         {
-            
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(_smtpSettings.SenderEmail));
-            message.To.Add(new MailboxAddress(recipientEmail));
+            message.From.Add(MailboxAddress.Parse(_smtpSettings.SenderEmail));
+            message.To.Add(MailboxAddress.Parse(recipientEmail));
             message.Subject = "How to send email in .Net Core";
-
             message.Body = new TextPart("plain")
             {
                 Text = "This is just a walkthrough in sending messages in .net core"
             };
 
-
-
             var client = new SmtpClient();
 
-            await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, true);
-            await client.AuthenticateAsync(new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password));
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
+            try
+            {
+                await client.AuthenticateAsync(new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password));
+                Task result = client.SendAsync(message);
+                await client.DisconnectAsync(true);
+                if (result.IsCompletedSuccessfully)
+                    return "Email Sent Successfully";
+                return "Failure Sending Email";
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                client.Dispose();
+            }
         }
     }
 }
