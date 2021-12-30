@@ -39,12 +39,11 @@ namespace EmailSender.Service
 
             try
             {
+                await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, true);
                 await client.AuthenticateAsync(new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password));
-                Task result = client.SendAsync(message);
+                await client.SendAsync(message);
                 await client.DisconnectAsync(true);
-                if (result.IsCompletedSuccessfully)
-                    return "Email Sent Successfully";
-                return "Failure Sending Email";
+                return "Email Sent Successfully";
             }
             catch (Exception ex)
             {
