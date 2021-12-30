@@ -19,10 +19,9 @@ namespace EmailSender.Controllers
         [HttpPost, Route("SendEmail")]
         public async Task<IActionResult> SendEmailAsync(string recipientEmail, string recipientFirstName, string Link)
         {
-            string messageStatus = string.Empty;
             try
             {
-                messageStatus = await _emailSender.SendEmailAsync(recipientEmail, recipientFirstName, Link);
+                 string messageStatus = await _emailSender.SendEmailAsync(recipientEmail, recipientFirstName, Link);
                 return Ok(messageStatus);
             }
             catch (Exception ex)
